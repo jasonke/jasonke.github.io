@@ -43,6 +43,11 @@
           var newWindow = window.open(uriContent, 'line');
         });
 
+        $('.ta').bind('input propertychange', function(){
+          barcodes = _.compact(this.value.split('\n'));
+          updateStatus(barcodes);
+        });
+
         $('.ti').bind('input propertychange', function() {
           clearErrorMsg();
           barcode = this.value;
