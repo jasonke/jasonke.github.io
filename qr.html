@@ -53,6 +53,7 @@
             if(_.indexOf(barcodes, barcode) !== -1){
               showErrorMsg('訊息: 條碼重複，請檢查此頁是否有漏掃！');
             }else if(barcode.length != 42){
+              console.log(barcode.length);
               showErrorMsg('訊息: 條碼長度需為42個字！');
             }else{
               barcodes.push(barcode);
