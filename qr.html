@@ -31,6 +31,7 @@
     <script src="http://code.jquery.com/jquery.js"></script>
     <!-- Bootstrap JavaScript -->
     <script src="http://netdna.bootstrapcdn.com/bootstrap/3.1.1/js/bootstrap.min.js"></script>
+    <script src="./js/file-saver.js"></script>
 
     <script>
       $(function(){
@@ -39,8 +40,8 @@
         var barcode = "";
 
         $('.save-btn').on('click', function(){
-          var uriContent = "data:application/octet-stream," + encodeURIComponent($('.ta').val());
-          var newWindow = window.open(uriContent, 'line');
+          var blob = new Blob([$('.ta').val()], {type: "text/plain;charset=utf-8"});
+          saveAs(blob, getDate()+'_Line序號'+barcodes.length+'組.txt');
         });
 
         $('.ta').bind('input propertychange', function(){
@@ -67,6 +68,24 @@
             }
           }
         });
+
+        var getDate = function(){
+          var now = new Date();
+          var y = now.getFullYear().toString();
+          var m = (now.getMonth()+1).toString();
+          var d = now.getDate().toString();
+          var h = now.getHours().toString();
+          var min = now.getMinutes().toString();
+          var s = now.getSeconds().toString();
+          
+          m = (m[1]?m:"0"+m[0]);
+          d = (d[1]?d:"0"+d[0]);
+          h = (h[1]?h:"0"+h[0]);
+          min = (min[1]?min:"0"+min[0]);
+          s = (s[1]?s:"0"+s[0]);
+
+          return y+m+d+'_'+h+min+s;
+        }
 
         var clearErrorMsg = function(){
           $('.msg').removeClass('bg-danger');
