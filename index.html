@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Line checker</title>
+
+    <!-- Bootstrap CSS -->
+    <link href="http://netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css" rel="stylesheet">
+    <script src="http://cdnjs.cloudflare.com/ajax/libs/lodash.js/3.9.3/lodash.js"></script>
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+      <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+  </head>
+  <body>
+    <div class="container">
+      <h1 class="bg-success msg ">訊息: 無</h1>
+      <h1 class="stat">已掃 0 組</h1>
+
+      <textarea class="ti form-control" rows="1" cols="80" placeholder="請點此處開始掃描"></textarea><br>
+      <textarea class="ta form-control" rows="15" cols="80"></textarea><br/>
+      <button type="button" class="save-btn btn btn-primary">存檔</button>
+    </div>
+
+    <!-- jQuery -->
+    <script src="http://code.jquery.com/jquery.js"></script>
+    <!-- Bootstrap JavaScript -->
+    <script src="http://netdna.bootstrapcdn.com/bootstrap/3.1.1/js/bootstrap.min.js"></script>
+
+    <script>
+      $(function(){
+        $('.ti').focus();
+        var barcodes = [];
+        var barcode = "";
+
+        $('.save-btn').on('click', function(){
+          var uriContent = "data:application/octet-stream," + encodeURIComponent(barcodes.join('\n'));
+          var newWindow = window.open(uriContent, 'line');
+        });
+
+        $('.ti').bind('input propertychange', function() {
+          $('.msg').removeClass('bg-danger');
+          $('.msg').addClass('bg-success');
+          $('.msg').html('訊息:');
+          barcode = this.value;
+          if(barcode.indexOf("\n") !== -1){
+            barcode = barcode.replace("\n", "");
+            $('.ti').val('');
+            if(barcodes.indexOf(barcode) !== -1){
+              $('.msg').removeClass('bg-success');
+              $('.msg').addClass('bg-danger');
+              $('.msg').html('訊息: 條碼重複，請檢查此頁是否有漏掃！');
+            }else if(barcode.length != 42){
+              $('.msg').removeClass('bg-success');
+              $('.msg').addClass('bg-danger');
+              $('.msg').html('訊息: 條碼長度需為42個字！');
+            }else{
+              barcodes.push(barcode);
+              $('.ta').val(barcodes.join('\n'));
+
+              updateStatus(barcodes);
+            }
+          }
+        });
+
+        var updateStatus = function(barcodes){
+          $('.stat').html('已掃 '+barcodes.length+' 組');
+        }
+
+        window.onpopstate = function(){
+          alert(111);
+        }
+      });
+      window.onbeforeunload = confirmExit;
+      function confirmExit()
+      {
+        return "如果沒有按存檔，離開之後本次掃描結果會全部不見，確定要離開嗎?";
+      }
+    </script>
+  </body>
+</html>
