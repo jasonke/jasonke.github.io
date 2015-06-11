@@ -44,21 +44,15 @@
         });
 
         $('.ti').bind('input propertychange', function() {
-          $('.msg').removeClass('bg-danger');
-          $('.msg').addClass('bg-success');
-          $('.msg').html('訊息:');
+          clearErrorMsg();
           barcode = this.value;
           if(barcode.indexOf("\n") !== -1){
             barcode = barcode.replace("\n", "");
             $('.ti').val('');
             if(barcodes.indexOf(barcode) !== -1){
-              $('.msg').removeClass('bg-success');
-              $('.msg').addClass('bg-danger');
-              $('.msg').html('訊息: 條碼重複，請檢查此頁是否有漏掃！');
+              showErrorMsg('訊息: 條碼重複，請檢查此頁是否有漏掃！');
             }else if(barcode.length != 42){
-              $('.msg').removeClass('bg-success');
-              $('.msg').addClass('bg-danger');
-              $('.msg').html('訊息: 條碼長度需為42個字！');
+              showErrorMsg('訊息: 條碼長度需為42個字！');
             }else{
               barcodes.push(barcode);
               $('.ta').val(barcodes.join('\n'));
@@ -68,12 +62,19 @@
           }
         });
 
-        var updateStatus = function(barcodes){
-          $('.stat').html('已掃 '+barcodes.length+' 組');
+        var clearErrorMsg = function(){
+          $('.msg').removeClass('bg-danger');
+          $('.msg').addClass('bg-success');
+          $('.msg').html('訊息:');
+        }
+        var showErrorMsg = function(msg){
+          $('.msg').removeClass('bg-success');
+          $('.msg').addClass('bg-danger');
+          $('.msg').html(msg);
         }
 
-        window.onpopstate = function(){
-          alert(111);
+        var updateStatus = function(barcodes){
+          $('.stat').html('已掃 '+barcodes.length+' 組');
         }
       });
       window.onbeforeunload = confirmExit;
