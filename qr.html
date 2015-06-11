@@ -39,7 +39,7 @@
         var barcode = "";
 
         $('.save-btn').on('click', function(){
-          var uriContent = "data:application/octet-stream," + encodeURIComponent(barcodes.join('\n'));
+          var uriContent = "data:application/octet-stream," + encodeURIComponent($('.ta').val());
           var newWindow = window.open(uriContent, 'line');
         });
 
