@@ -39,12 +39,17 @@
         var barcodes = [];
         var barcode = "";
 
+        var barcodeFilter = function(v){
+          return v.length == 42;
+        }
         $('.save-btn').on('click', function(){
-          var blob = new Blob([$('.ta').val()], {type: "text/plain;charset=utf-8"});
-          saveAs(blob, getDate()+'_Line序號'+barcodes.length+'組.txt');
+          var validBarcodes = _.uniq(_.filter(barcodes, barcodeFilter));
+          var blob = new Blob([validBarcodes.join('\n')], {type: "text/plain;charset=utf-8"});
+          saveAs(blob, getDate()+'_Line序號'+validBarcodes.length+'組.txt');
+          validBarcodes = undefined;
         });
 
-        $('.ta').bind('input propertychange', function(){
+        $('.ta').bind('input propertychange', function(v,vv){
           barcodes = _.compact(this.value.split('\n'));
           updateStatus(barcodes);
         });
@@ -57,9 +62,9 @@
             $('.ti').val('');
 
             if(_.indexOf(barcodes, barcode) !== -1){
-              showErrorMsg('訊息: 條碼重複，請檢查此頁是否有漏掃！');
+              showErrorMsg('條碼重複，請檢查此頁是否有漏掃！');
             }else if(barcode.length != 42){
-              showErrorMsg('訊息: 條碼長度需為42個字, 目前條碼長度為'+barcode.length+'！');
+              showErrorMsg('條碼長度需為42個字, 目前條碼長度為'+barcode.length+'！');
             }else{
               barcodes.push(barcode);
               $('.ta').val(barcodes.join('\n'));
@@ -95,11 +100,13 @@
         var showErrorMsg = function(msg){
           $('.msg').removeClass('bg-success');
           $('.msg').addClass('bg-danger');
-          $('.msg').html(msg);
+          $('.msg').html('訊息: '+msg);
         }
 
         var updateStatus = function(barcodes){
-          $('.stat').html('已掃 '+barcodes.length+' 組');
+          var validBarcodes = _.uniq(_.filter(barcodes, barcodeFilter));
+
+          $('.stat').html('已掃 '+barcodes.length+' 組（有效 '+validBarcodes.length+' 組, 無效 '+(barcodes.length - validBarcodes.length)+' 組）');
         }
       });
       window.onbeforeunload = confirmExit;
