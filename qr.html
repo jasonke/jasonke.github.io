@@ -47,9 +47,11 @@
           var blob = new Blob([validBarcodes.join('\n')], {type: "text/plain;charset=utf-8"});
           saveAs(blob, getDate()+'_Line序號'+validBarcodes.length+'組.txt');
           validBarcodes = undefined;
+          $('.ti').focus();
         });
 
         $('.ta').bind('input propertychange', function(v,vv){
+          clearErrorMsg();
           barcodes = _.compact(this.value.split('\n'));
           updateStatus(barcodes);
         });
